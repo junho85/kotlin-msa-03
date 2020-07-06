@@ -1,17 +1,37 @@
 package kr.pe.junho85.demo
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
-import java.util.concurrent.ConcurrentHashMap
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class CustomerController {
     @Autowired
-    lateinit var customers : ConcurrentHashMap<Int, Customer>
+    lateinit var customerService: CustomerService
 
-    @RequestMapping(value = ["/customer"], method = [RequestMethod.GET])
-    fun getCustomer() = customers[2]
-//            Customer(1, "Kotlin")
+    @GetMapping("/customers/{id}")
+    fun getCustomer(@PathVariable id : Int) = customerService.getCustomer(id)
+
+    @PostMapping("/customers")
+    fun createCustomer(@RequestBody customer: Customer) {
+        customerService.createCustomer(customer)
+    }
+
+    @DeleteMapping("/customers/{id}")
+    fun deleteCustomer(@PathVariable id: Int) = customerService.deleteCustomer(id)
+
+    @PutMapping("/customers/{id}")
+    fun updateCusomter(@PathVariable id: Int, @RequestBody customer: Customer) {
+        customerService.updateCustomer(id, customer)
+    }
+
+    @GetMapping("/customers")
+    fun getCustomers(@RequestParam(required = false, defaultValue = "")nameFilter: String) =
+            customerService.searchCustomers(nameFilter)
+
+//    @GetMapping("/customers")
+//    fun getCustomers(@RequestParam(required = false, defaultValue = "")
+//    nameFilter: String) = customers.filter {
+//        it.value.name.contains(nameFilter, true)
+//    }.map(Map.Entry<Int, Customer>::value).toList()
+
 }
