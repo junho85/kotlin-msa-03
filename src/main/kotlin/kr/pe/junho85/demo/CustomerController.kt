@@ -12,9 +12,12 @@ class CustomerController {
 
     @GetMapping("/customers/{id}")
     fun getCustomer(@PathVariable id : Int): ResponseEntity<Customer> {
-        val customer = customerService.getCustomer(id)
-        val status = if (customer == null) HttpStatus.NOT_FOUND else HttpStatus.OK
-        return ResponseEntity(customer, status)
+        val customer = customerService.getCustomer(id) ?:
+                throw CustomerNotFoundException("customer '$id' not found")
+        return ResponseEntity(customer, HttpStatus.OK)
+//        val status = if (customer == null) HttpStatus.NOT_FOUND else HttpStatus.OK
+//        return ResponseEntity(customer, status)
+
     }
 
     @PostMapping("/customers")
